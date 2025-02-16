@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import React from "react";
+import "./index.css";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Perfil from "./pages/Profile";
@@ -18,10 +20,10 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/perfil" element={<Perfil />} />
-        <Route path="/dashboard-aluno" element={<DashboardAluno />} />
+        <Route path="/profile" element={<Perfil />} />
+        <Route path="/dashboard-student" element={<DashboardAluno />} />
         <Route path="/dashboard-professor" element={<DashboardProfessor />} />
-        <Route path="/dashboard-coordenador" element={<DashboardCoordenador />} />
+        <Route path="/dashboard-coordinator" element={<DashboardCoordenador />} />
         <Route path="/cursos" element={<Cursos />} />
         <Route path="/eventos" element={<Eventos />} />
         <Route path="/eventos/:id" element={<DetalhesEvento />} /> {/* Rota de detalhes */}
