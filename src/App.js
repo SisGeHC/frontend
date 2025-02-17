@@ -7,11 +7,21 @@ import Perfil from "./pages/Profile";
 import DashboardAluno from "./pages/DashboardAluno";
 import DashboardProfessor from "./pages/DashboardProfessor";
 import DashboardCoordenador from "./pages/DashboardCoordenador";
+import CriarEvento from "./pages/CriarEventoProfessor";
 import Cursos from "./pages/Cursos";
+import Certificados from "./pages/Certificados";
 import Eventos from "./pages/Eventos";
 import DetalhesEvento from "./pages/DetalhesEvento";
 import MeusEventos from "./pages/MeusEventos";
-import Certificados from "./pages/Certificados";
+import EditarEvento from "./pages/EditarEventoProfessor";
+import ProfileProfessor from "./pages/ProfileProfessor";
+import ProfileCoordenador from "./pages/ProfileCoordenador";
+import ListaAlunos from "./pages/ListaAlunos";
+import ListaProfessores from "./pages/ListaProfessores";
+import DetalhesAluno from "./pages/DetalheAluno";
+import DetalhesProfessor from "./pages/DetalheProfessor";
+import CertificadosPendentes from "./pages/CertificadosPendentesjsx";
+
 
 function App() {
   return (
@@ -21,12 +31,21 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Perfil />} />
+        <Route path="/profile-professor" element={<ProfileProfessor />} />
+        <Route path="/profile-coordenador" element={<ProfileCoordenador />} />
+        <Route path="/professores/:id" element={<DetalhesProfessor />} />
         <Route path="/dashboard-student" element={<DashboardAluno />} />
         <Route path="/dashboard-professor" element={<DashboardProfessor />} />
         <Route path="/dashboard-coordinator" element={<DashboardCoordenador />} />
+        <Route path="/alunos/:id" element={<DetalhesAluno />} />
+        <Route path="/certificados-pendentes" element={<CertificadosPendentes />} />
         <Route path="/cursos" element={<Cursos />} />
         <Route path="/eventos" element={<Eventos />} />
+        <Route path="/eventos/criar" element={<CriarEvento />} />
+        <Route path="/eventos/editar/:id" element={<EditarEvento />} />
         <Route path="/eventos/:id" element={<DetalhesEvento />} /> {/* Rota de detalhes */}
+        <Route path="/lista-alunos" element={<ListaAlunos />} />
+        <Route path="/lista-professores" element={<ListaProfessores />} />
         <Route path="/meus-eventos" element={<MeusEventos />} /> {/* Rota de eventos participados */}
         <Route path="/certificados" element={<Certificados />} />
         <Route path="*" element={<h2>Página não encontrada</h2>} />

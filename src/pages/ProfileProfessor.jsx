@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Profile = () => {
+const ProfileProfessor = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -29,7 +29,7 @@ const Profile = () => {
       }
 
       try {
-        const response = await fetch(`http://127.0.0.1:8000/students/${userId}/`, {
+        const response = await fetch(`http://127.0.0.1:8000/professors/${userId}/`, {
           method: "GET",
           headers: { Authorization: `Token ${token}`, "Content-Type": "application/json" },
         });
@@ -71,11 +71,6 @@ const Profile = () => {
     localStorage.clear();
     navigate("/login");
   };
-
-  const handleCertificate = () => {
-    console.log("Acessando certificados...");
-    navigate("/certificados");
-  }
 
   const openEditModal = (field) => {
     if (!userData) return;
@@ -130,29 +125,37 @@ const Profile = () => {
     try {
       let requestBody = {};
   
-      // 🔹 Se for EMAIL, exige senha e atualiza corretamente
+      // 🔹 Se for atualização do EMAIL
       if (editField === "email") {
         if (!confirmPassword.trim()) {
           alert("Digite sua senha para confirmar.");
           return;
         }
         requestBody = {
-          email: editValue, // Agora enviamos corretamente o email
+          email: editValue,
           password: confirmPassword,
         };
       }
   
-      // 🔹 Se for CURSO, envia apenas o ID
-
+      // 🔹 Se for atualização do CURSO, precisamos do NOME e das HORAS COMPLEMENTARES
       else if (editField === "course") {
-        console.log("📤 Tentando atualizar curso para:", editValue);
+        const selectedCourse = courses.find((course) => course.id === parseInt(editValue));
+        if (!selectedCourse) {
+          alert("Curso inválido.");
+          return;
+        }
+  
+        console.log("📤 Tentando atualizar curso para:", selectedCourse.name);
+  
         requestBody = {
-          course: parseInt(editValue), // 🔥 Apenas ID do curso
+          course: {
+            name: selectedCourse.name,
+            complementary_hours_needed: selectedCourse.complementary_hours_needed, // 🔥 Adicionando o campo necessário
+          },
         };
       }
-      
   
-      const response = await fetch(`http://127.0.0.1:8000/students/${userId}/update/`, {
+      const response = await fetch(`http://127.0.0.1:8000/professors/${userId}/update/`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -162,7 +165,10 @@ const Profile = () => {
       });
   
       if (!response.ok) {
-        throw new Error("Erro ao atualizar os dados. Verifique os campos.");
+        const errorData = await response.json();
+        console.error("❌ Erro ao atualizar:", errorData);
+        alert("Erro ao atualizar os dados: " + JSON.stringify(errorData, null, 2));
+        return;
       }
   
       const updatedData = await response.json();
@@ -170,12 +176,8 @@ const Profile = () => {
   
       setUserData((prevData) => ({
         ...prevData,
-        [editField]: editField === "course" ? updatedData.course : editValue,
+        course: updatedData.course, 
       }));
-  
-      if (editField === "email") {
-        localStorage.setItem("email", editValue);
-      }
   
       alert("✅ Dados atualizados com sucesso!");
       closeEditModal();
@@ -184,6 +186,7 @@ const Profile = () => {
       alert("Erro ao salvar alteração.");
     }
   };
+  
   
 
   const handleSavePassword = async () => {
@@ -246,13 +249,9 @@ const Profile = () => {
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Minha Conta</li>
                 <li 
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer" 
-                  onClick={() => navigate("/dashboard-student")}
+                  onClick={() => navigate("/dashboard-professor")}
                 >
-                  Eventos
-                </li>
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Meus Eventos</li>
-                <li onClick={handleCertificate} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  Meus Certificados
+                  Meus Eventos
                 </li>
                 <li onClick={handleLogout} className="px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer">Sair</li>
               </ul>
@@ -409,8 +408,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
-
-
-
-
+export default ProfileProfessor;
