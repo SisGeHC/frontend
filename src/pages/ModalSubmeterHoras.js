@@ -3,50 +3,48 @@ import React, { useState } from "react";
 const ModalSubmeterHoras = ({ isOpen, onClose }) => {
   const [categoria, setCategoria] = useState("");
   const [arquivo, setArquivo] = useState(null);
-  const [horas, setHoras] = useState("");
 
   const handleFileChange = (event) => {
     setArquivo(event.target.files[0]);
   };
 
   const handleSubmit = async () => {
-    if (!categoria || !arquivo || !horas) {
+    if (!categoria || !arquivo) {
       alert("Por favor, preencha todos os campos.");
       return;
     }
-  
+
     const token = localStorage.getItem("token"); // Pegando o token do usuário logado
-  
+
     if (!token) {
       alert("Erro: Usuário não autenticado.");
       return;
     }
-  
+
     const formData = new FormData();
     formData.append("file", arquivo);
-    formData.append("hours_taken", horas);
-  
+
     try {
       const response = await fetch("http://127.0.0.1:8000/certificates/post/", {
         method: "POST",
         headers: {
-          Authorization: `Token ${token}`, // 🔥 Adicionando Token no Cabeçalho
+          Authorization: `Token ${token}`,
         },
         body: formData,
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         console.error("❌ Erro ao enviar certificado:", errorData);
-        alert(`Erro ao submeter horas: ${errorData.detail || "Tente novamente."}`);
+        alert(`Erro ao enviar certificado: ${errorData.detail || "Tente novamente."}`);
         return;
       }
-  
+
       alert("✅ Certificado enviado com sucesso!");
       onClose();
     } catch (error) {
       console.error("Erro no envio:", error);
-      alert("Erro ao submeter horas.");
+      alert("Erro ao submeter certificado.");
     }
   };
 
@@ -69,16 +67,6 @@ const ModalSubmeterHoras = ({ isOpen, onClose }) => {
           <option value="Palestra">Palestra</option>
           <option value="Oficina">Oficina</option>
         </select>
-
-        {/* Número de Horas */}
-        <label className="block text-gray-700">Número de Horas</label>
-        <input
-          type="number"
-          className="w-full p-2 border rounded mb-4"
-          value={horas}
-          onChange={(e) => setHoras(e.target.value)}
-          min="1"
-        />
 
         {/* Upload de Arquivo */}
         <label className="block text-gray-700">Selecionar Arquivo</label>

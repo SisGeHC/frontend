@@ -1,63 +1,49 @@
-import React, { useState } from "react";
+import React from 'react';
 
-const DetalhesEvento = ({ evento, onClose }) => {
-  const [abaAtiva, setAbaAtiva] = useState("geral");
-
-  if (!evento) return null; // Se não houver evento, não renderiza nada
-
+const EventoDetalhes = ({ evento }) => {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg w-2/5">
-        {/* Cabeçalho */}
-        <div className="bg-gradient-to-r from-green-600 to-green-400 text-white p-4 flex justify-between items-center">
-          <div>
-            <h2 className="text-xl font-bold">{evento.title}</h2>
-            <p className="text-sm">{evento.creator} - {evento.category}</p>
+    <div className="min-h-screen bg-gray-100">
+      {/* Cabeçalho */}
+      <header className="bg-gradient-to-r from-green-500 to-green-700 p-4 flex justify-between items-center">
+        <h1 className="text-white text-2xl font-bold">SISGEHC</h1>
+        <div className="relative">
+          <button className="text-white text-2xl focus:outline-none">
+            👤
+          </button>
+        </div>
+      </header>
+
+      {/* Detalhes do Evento */}
+      <div className="p-6 max-w-5xl mx-auto bg-white shadow-md rounded-lg flex">
+        {/* Informações do Evento */}
+        <div className="w-2/3 pr-8">
+          <h2 className="text-2xl font-semibold mb-4">{evento.title}</h2>
+          <p className="text-sm text-gray-600"><strong>Data:</strong> {evento.dates[0]?.day}</p>
+          <p className="text-sm text-gray-600"><strong>Local:</strong> {evento.location}</p>
+          <p className="text-sm text-gray-600"><strong>Horário:</strong> {evento.dates[0]?.start_time} - {evento.dates[0]?.end_time}</p>
+          <p className="text-sm text-gray-600"><strong>Descrição:</strong> {evento.description}</p>
+          <p className="text-sm text-gray-600"><strong>Carga Horária:</strong> {evento.hours_taken} horas</p>
+        </div>
+
+        {/* QR Code */}
+        <div className="w-1/3">
+          <h3 className="text-xl font-semibold mb-4">QR Code</h3>
+          <div className="flex justify-center">
+            <img src={evento.qr_code} alt="QR Code do Evento" className="w-48 h-48 object-contain" />
           </div>
-          <button onClick={onClose} className="text-white text-2xl">✖</button>
-        </div>
-
-        {/* Navegação entre abas */}
-        <div className="flex border-b">
-          <button
-            className={`px-4 py-2 font-semibold ${abaAtiva === "geral" ? "border-b-2 border-green-500 text-green-500" : "text-gray-500"}`}
-            onClick={() => setAbaAtiva("geral")}
-          >
-            Informações gerais
-          </button>
-          <button
-            className={`px-4 py-2 font-semibold ml-4 ${abaAtiva === "avisos" ? "border-b-2 border-green-500 text-green-500" : "text-gray-500"}`}
-            onClick={() => setAbaAtiva("avisos")}
-          >
-            Avisos
-          </button>
-        </div>
-
-        {/* Conteúdo da aba ativa */}
-        <div className="p-6">
-          {abaAtiva === "geral" ? (
-            <div>
-              <h3 className="text-lg font-semibold">Descrição</h3>
-              <p className="text-gray-600 mb-4">{evento.description}</p>
-
-              <div className="text-gray-700 space-y-2">
-                <p>📅 <strong>Data:</strong> {evento.dates[0]?.day}</p>
-                <p>📍 <strong>Local:</strong> {evento.location}</p>
-                <p>⏰ <strong>Horário:</strong> {evento.dates[0]?.start_time} - {evento.dates[0]?.end_time}</p>
-                <p>🔖 <strong>Categoria:</strong> {evento.category}</p>
-              </div>
-            </div>
-          ) : (
-            <div>
-              <h3 className="text-lg font-semibold">Avisos</h3>
-              <p className="text-gray-600">Nenhum aviso disponível no momento.</p>
-            </div>
-          )}
         </div>
       </div>
+
+      <footer className="bg-green-700 text-white text-center p-4 mt-6">
+        <p>Sistema criado para fins acadêmicos</p>
+        <p>Governo do Estado do Ceará</p>
+        <p>Todos os Direitos Reservados</p>
+      </footer>
     </div>
   );
 };
 
-export default DetalhesEvento;
+export default EventoDetalhes;
+
+
 

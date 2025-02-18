@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import React from "react";
+
 import "./index.css";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -20,7 +21,10 @@ import ListaAlunos from "./pages/ListaAlunos";
 import ListaProfessores from "./pages/ListaProfessores";
 import DetalhesAluno from "./pages/DetalheAluno";
 import DetalhesProfessor from "./pages/DetalheProfessor";
-import CertificadosPendentes from "./pages/CertificadosPendentesjsx";
+import CertificadosPendentes from "./pages/CertificadosPendentes.jsx";
+import EventoDetalhes from "./pages/Presenca.jsx";
+import ValidarPresenca from "./pages/Presenca.jsx";
+import CriarEventoCoord from "./pages/CriarEventoCoordenador.jsx";
 
 
 function App() {
@@ -30,6 +34,8 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/qrcode" element={<EventoDetalhes />} />
+        <Route path="/presenca" element={<ValidarPresenca />} />
         <Route path="/profile" element={<Perfil />} />
         <Route path="/profile-professor" element={<ProfileProfessor />} />
         <Route path="/profile-coordenador" element={<ProfileCoordenador />} />
@@ -41,6 +47,7 @@ function App() {
         <Route path="/certificados-pendentes" element={<CertificadosPendentes />} />
         <Route path="/cursos" element={<Cursos />} />
         <Route path="/eventos" element={<Eventos />} />
+        <Route path="/eventos/coordenador" element={<CriarEventoCoord />} />
         <Route path="/eventos/criar" element={<CriarEvento />} />
         <Route path="/eventos/editar/:id" element={<EditarEvento />} />
         <Route path="/eventos/:id" element={<DetalhesEvento />} /> {/* Rota de detalhes */}

@@ -93,11 +93,11 @@ const DashboardProfessor = () => {
         {/* 🔥 Grid dos eventos */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {/* Card para criar evento */}
-          <div
-            className="bg-white shadow-md rounded-lg flex flex-col items-center justify-center p-6 cursor-pointer hover:bg-gray-100"
-            onClick={() => navigate("/criar-evento")}
+          <div 
+            onClick={() => navigate("/eventos/coordenador")} 
+            className="flex flex-col justify-center items-center bg-white shadow-md rounded-lg p-6 border border-gray-300 cursor-pointer hover:bg-gray-50 transition h-[150px]"
           >
-            <div className="text-green-500 text-4xl">+</div>
+            <span className="text-green-500 font-bold leading-none" style={{ fontSize: '5em' }}>+</span> 
             <p className="text-gray-600 mt-2">Criar evento</p>
           </div>
 

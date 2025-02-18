@@ -64,7 +64,7 @@ const ListaProfessores = () => {
                   Alunos
                 </li>
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Professores</li>
-                <li onClick={() => navigate("/certificados")} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <li onClick={() => navigate("/certificados-pendentes")} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                   Certificados
                 </li>
                 <li onClick={() => navigate("/login")} className="px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer">

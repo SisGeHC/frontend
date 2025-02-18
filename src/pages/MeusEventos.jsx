@@ -11,109 +11,69 @@ const MeusEventos = () => {
   useEffect(() => {
     const fetchEventos = async () => {
       try {
-        const studentId = Number(localStorage.getItem("role_id")); // 🔥 Converte ID para número
+        const studentId = Number(localStorage.getItem("role_id"));
         const token = localStorage.getItem("token");
-  
+
         if (!studentId) {
           console.error("ID do aluno não encontrado.");
           return;
         }
-  
-        console.log("📡 Buscando matrículas do aluno...");
+
         const response = await fetch("http://127.0.0.1:8000/enrollments/", {
           headers: {
             "Authorization": `Token ${token}`,
           },
         });
-  
-        console.log("📩 Resposta do GET /enrollments/:", response.status);
-  
+
         if (!response.ok) {
           throw new Error("Erro ao buscar eventos do aluno.");
         }
-  
+
         const data = await response.json();
-        console.log("📌 Matrículas recebidas (Estrutura real da resposta):", data);
-  
-        console.log("🔍 Exemplo de 'student' retornado pela API:", data[0]?.student);
-  
-        // 🔍 Filtra as matrículas apenas do estudante logado
         const matriculasAluno = data.filter(matricula => Number(matricula.student) === studentId);
-        console.log("📌 Matrículas filtradas do aluno:", matriculasAluno);
-  
-        const agora = new Date();
-  
+
+        const agora = new Date(); // Hora atual
         const ativos = [];
         const encerrados = [];
-  
+
         matriculasAluno.forEach(matricula => {
           const evento = matricula.event;
-  
-          if (!evento.dates || evento.dates.length === 0) {
-            console.warn(`⚠️ Evento '${evento.title}' sem datas registradas.`);
-            ativos.push(evento);
-            return;
-          }
-  
           const { day, end_time } = evento.dates[0];
-  
-          if (!day || typeof day !== "string" || day.length < 10) {
-            console.warn(`⚠️ Evento '${evento.title}' com data inválida: ${day}`);
-            ativos.push(evento);
-            return;
-          }
-  
-          if (!end_time || typeof end_time !== "string" || end_time.length < 5) {
-            console.warn(`⚠️ Evento '${evento.title}' com horário de fim inválido: ${end_time}`);
-            ativos.push(evento);
-            return;
-          }
-  
-          // 🔥 Formatar `end_time` para garantir que tenha segundos
+
+          // Formatar hora de término para garantir a comparação correta
           const horaFimFormatada = end_time.length === 5 ? `${end_time}:00` : end_time;
-  
-          // 🔥 Criar objeto `Date()` corretamente formatado
           const dataFim = new Date(`${day}T${horaFimFormatada}`);
-  
-          console.log(`⏳ Verificando evento: ${evento.title} - Fim: ${dataFim} | Agora: ${agora}`);
-  
-          if (isNaN(dataFim.getTime())) {
-            console.error(`❌ Data inválida para o evento '${evento.title}': ${day} ${horaFimFormatada}`);
-            ativos.push(evento);
+
+          // Remover as horas para comparar apenas datas
+          const dataFimSomenteDia = new Date(dataFim.setHours(0, 0, 0, 0)); // Remover hora e minutos
+
+          // Comparar se a data de término já passou
+          const hoje = new Date();
+          hoje.setHours(0, 0, 0, 0); // Também remover hora, minutos e segundos da data de hoje para comparação
+
+          // Se a data de término já passou, será considerado "encerrado no dia seguinte"
+          if (dataFimSomenteDia < hoje) {
+            // Evento encerrado: A data de término já passou, então é encerrado no dia seguinte
+            encerrados.push({ ...evento, status: "encerrado" });
           } else {
-            if (dataFim >= agora) {
-              ativos.push(evento);
-            } else {
-              encerrados.push(evento);
-            }
+            // Evento ativo: ainda não chegou a data de término
+            ativos.push({ ...evento, status: "ativo" });
           }
         });
-  
-        console.log("🟢 Eventos Ativos:", ativos);
-        console.log("🔴 Eventos Encerrados:", encerrados);
-  
+
         setEventosAtivos(ativos);
         setEventosEncerrados(encerrados);
       } catch (error) {
-        console.error("❌ Erro ao carregar eventos:", error);
+        console.error("Erro ao carregar eventos:", error);
       }
     };
-  
+
     fetchEventos();
   }, []);
-  
-  
-  
-  
-  const handleCertificate = () => {
-    console.log("Acessando certificados...");
-    navigate("/certificados");
-  }
 
-  const handleLogout = () => {
-    console.log("🚪 Usuário saindo...");
-    localStorage.clear();
-    navigate("/login");
+  // Função para redirecionar para a página de detalhes
+  const verDetalhes = (eventoId) => {
+    navigate(`/eventos/:id`); // Rota dinâmica para detalhes do evento
   };
 
   return (
@@ -128,16 +88,9 @@ const MeusEventos = () => {
             <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
               <ul className="py-2">
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Minha Conta</li>
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => navigate("/dashboard-student")}>
-                  Eventos
-                </li>
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Meus Eventos</li>
-                <li onClick={handleCertificate} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  Meus Certificados
-                </li>
-                <li className="px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>
-                  Sair
-                </li>
+                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Meus Certificados</li>
+                <li className="px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer">Sair</li>
               </ul>
             </div>
           )}
@@ -147,7 +100,7 @@ const MeusEventos = () => {
       <div className="p-6 max-w-5xl mx-auto bg-white shadow-md rounded-lg">
         <h2 className="text-2xl font-semibold mb-6">Meus eventos</h2>
 
-        {/* 🔥 Aba de seleção */}
+        {/* Aba de seleção */}
         <div className="flex border-b mb-4">
           <button
             className={`px-4 py-2 font-semibold ${abaAtiva === "ativos" ? "border-b-2 border-green-500 text-green-500" : "text-gray-500"}`}
@@ -163,7 +116,7 @@ const MeusEventos = () => {
           </button>
         </div>
 
-        {/* 🔥 Lista de eventos (Ativos ou Encerrados) */}
+        {/* Lista de eventos (Ativos ou Encerrados) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {(abaAtiva === "ativos" ? eventosAtivos : eventosEncerrados).length > 0 ? (
             (abaAtiva === "ativos" ? eventosAtivos : eventosEncerrados).map((evento) => (
@@ -172,11 +125,11 @@ const MeusEventos = () => {
                 <p className="text-sm text-gray-600">📅 {evento.dates[0]?.day}</p>
                 <p className="text-sm text-gray-600">📍 {evento.location}</p>
                 <p className="text-sm text-gray-600">⏰ {evento.dates[0]?.start_time} - {evento.dates[0]?.end_time}</p>
+                <p className="text-sm text-gray-600">Status: {evento.status === "ativo" ? "Ativo" : "Encerrado"}</p>
 
-                <a href="#" className="text-blue-500 text-sm mt-2 block">Ver ingresso</a>
-
+                {/* Botão de Ver Detalhes que leva à página do evento */}
                 <button
-                  onClick={() => navigate(`/eventos/detalhes/${evento.id}`)}
+                  onClick={() => verDetalhes(evento.id)} // Redireciona para a página de detalhes do evento
                   className="mt-4 bg-green-500 text-white w-full py-2 rounded-lg hover:bg-green-600"
                 >
                   Ver detalhes
@@ -199,6 +152,11 @@ const MeusEventos = () => {
 };
 
 export default MeusEventos;
+
+
+
+
+
 
 
 

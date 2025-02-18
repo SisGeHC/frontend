@@ -101,6 +101,11 @@ const Profile = () => {
     setIsEditing(false);
   };
 
+  const handleMeusEventos = () => {
+    console.log("🚪 Meu Eventos...");
+    navigate("/meus-eventos");
+  };
+
   const openPasswordModal = () => {
     setIsChangingPassword(true);
     setOldPassword("");
@@ -250,7 +255,7 @@ const Profile = () => {
                 >
                   Eventos
                 </li>
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Meus Eventos</li>
+                <li onClick={handleMeusEventos} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Meus Eventos</li>
                 <li onClick={handleCertificate} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                   Meus Certificados
                 </li>

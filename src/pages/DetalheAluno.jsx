@@ -66,7 +66,7 @@ const DetalhesAluno = () => {
   }, [id]);
 
   const handleOpenModal = (evento) => {
-    console.log("🔍 Abrindo modal para evento:", evento);
+    console.log("🔍 Abrindo modal para evento:", evento); 
     setSelectedEvento(evento);
   };
 
@@ -189,26 +189,29 @@ const DetalhesAluno = () => {
         <p>Governo do Estado do Ceará</p>
         <p>Todos os Direitos Reservados</p>
       </footer>
-      {/* 🔥 Modal de Detalhes do Evento */}
       {selectedEvento && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[70%] h-[70%] flex flex-col">
-            <div className="flex justify-between items-center border-b pb-2">
-              <h3 className="text-xl font-bold text-green-700">{selectedEvento.title}</h3>
-              <button onClick={handleCloseModal} className="text-gray-500 hover:text-gray-700 text-2xl">×</button>
-            </div>
-  
-            <div className="flex-grow overflow-auto p-4">
-              <p className="text-sm text-gray-500">
-                {selectedEvento.creator?.full_name || "Desconhecido"} - {selectedEvento.course || "Curso não informado"}
-              </p>
-              <p className="text-gray-700">{selectedEvento.description}</p>
-              <p className="text-sm text-gray-600">📅 {selectedEvento.dates?.[0]?.day || "Data não informada"}</p>
-              <p className="text-sm text-gray-600">📍 {selectedEvento.location}</p>
-            </div>
-          </div>
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-[70%] h-[70%] flex flex-col">
+      <div className="flex justify-between items-center border-b pb-2">
+        <h3 className="text-xl font-bold text-green-700">{selectedEvento.event?.title}</h3>
+        <button onClick={handleCloseModal} className="text-gray-500 hover:text-gray-700 text-2xl">×</button>
+      </div>
+
+        <div className="flex-grow overflow-auto p-4">
+          <p className="text-sm text-gray-500">
+            Criador: {selectedEvento.event?.creator?.full_name || "Desconhecido"} 
+            - Curso: {selectedEvento.event?.creator?.course_name || "Curso não informado"}
+          </p>
+          <p className="text-gray-700">{selectedEvento.event?.description}</p>
+          <p className="text-sm text-gray-600">📅 {selectedEvento.event?.dates?.[0]?.day || "Data não informada"}</p>
+          <p className="text-sm text-gray-600">📍 {selectedEvento.event?.location || "Local não informado"}</p>
+
+          {/* Log para verificar cada detalhe que está sendo exibido no modal */}
+          {console.log("🧐 Dados do evento no modal:", selectedEvento.event)}
         </div>
-      )}
+      </div>
+    </div>
+  )}
     </div>
   );
 };

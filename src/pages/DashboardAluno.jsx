@@ -97,6 +97,7 @@ const DashboardAluno = () => {
             body: JSON.stringify({
                 student: studentIdReal, // Agora está pegando o ID correto
                 event: selectedEvento.id,
+                attended: false,
             }),
         });
 
