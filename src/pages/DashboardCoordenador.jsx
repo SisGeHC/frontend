@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const DashboardProfessor = () => {
+const DashboardCoordenador = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [eventos, setEventos] = useState([]);
@@ -9,35 +9,52 @@ const DashboardProfessor = () => {
   useEffect(() => {
     const fetchEventos = async () => {
       try {
-        const professorId = localStorage.getItem("role_id");
         const token = localStorage.getItem("token");
-
-        if (!professorId) {
-          console.error("ID do professor não encontrado.");
+        const roleId = parseInt(localStorage.getItem("role_id"), 10); // ID do Coordenador logado
+        let localemail = localStorage.getItem("email") || ""; 
+  
+        console.log("🔍 Verificando dados do usuário logado...");
+  
+        if (!token || isNaN(roleId)) {
+          console.error("Token, role_id ou user_type não encontrado.");
           return;
         }
-
-        console.log("📡 Buscando eventos do professor...");
-        const response = await fetch(`http://127.0.0.1:8000/events/professor/${professorId}/`, {
+  
+        console.log("📡 Buscando todos os eventos...");
+        const response = await fetch("http://127.0.0.1:8000/events/list/", {
           headers: {
             "Authorization": `Token ${token}`,
           },
         });
-
+  
         if (!response.ok) {
-          throw new Error("Erro ao buscar eventos do professor.");
+          throw new Error("Erro ao buscar eventos.");
         }
-
+  
         const data = await response.json();
-        console.log("📌 Eventos do professor recebidos:", data);
-        setEventos(data);
+        console.log("📌 Todos os eventos recebidos:", data);
+  
+        // Exibir detalhes no console para depuração
+        data.forEach(evento => {
+          console.log(`🎯 Evento ID: ${evento.id} - Criado por: ${evento.creator.id} - Tipo real do creator: ${evento.creator.email}`);
+        });
+  
+        // 🔹 Filtrar eventos criados apenas pelo coordenador logado
+        const eventosFiltrados = data.filter(evento =>
+          evento.creator &&
+          (evento.creator.id === roleId) && // Garante que o ID é do coordenador logado
+          (evento.creator.email === localemail) // Confirma que o criador é um coordenador
+        );
+  
+        console.log("🟢 Eventos filtrados para o coordenador logado:", eventosFiltrados);
+        setEventos(eventosFiltrados);
       } catch (error) {
         console.error("Erro ao carregar eventos:", error);
       }
     };
-
+  
     fetchEventos();
-  }, []);
+  }, []);  
 
   const handleLogout = () => {
     console.log("🚪 Usuário saindo...");
@@ -109,10 +126,14 @@ const DashboardProfessor = () => {
                 <p className="text-sm text-gray-600">📅 {evento.dates[0]?.day}</p>
                 <p className="text-sm text-gray-600">📍 {evento.location}</p>
                 <p className="text-sm text-gray-600">⏰ {evento.dates[0]?.start_time} - {evento.dates[0]?.end_time}</p>
-                <p className="text-sm text-gray-600">Realização: {evento.creator}</p>
+
+                {/* Verifica se 'creator' é um objeto e exibe o nome do coordenador corretamente */}
+                <p className="text-sm text-gray-600">
+                  Realização: {evento.creator?.full_name || "Desconhecido"}
+                </p>
 
                 <button
-                  onClick={() => navigate(`/eventos/editar/${evento.id}`)}
+                  onClick={() => navigate(`/eventos/coord/editar/${evento.id}`)}
                   className="mt-4 bg-green-500 text-white w-full py-2 rounded-lg hover:bg-green-600 flex justify-center items-center"
                 >
                   ✏️ Editar
@@ -122,6 +143,7 @@ const DashboardProfessor = () => {
           ) : (
             <p className="text-gray-500">Nenhum evento criado.</p>
           )}
+
         </div>
       </div>
 
@@ -135,4 +157,4 @@ const DashboardProfessor = () => {
   );
 };
 
-export default DashboardProfessor;
+export default DashboardCoordenador;

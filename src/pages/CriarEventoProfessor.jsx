@@ -180,5 +180,3 @@ const CriarEvento = () => {
 };
 
 export default CriarEvento;
-
-

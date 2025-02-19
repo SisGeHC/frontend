@@ -9,7 +9,7 @@ const Eventos = () => {
   useEffect(() => {
     const fetchEventos = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/eventos/", {
+        const response = await fetch("http://127.0.0.1:8000/eventos/list", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -34,7 +34,7 @@ const Eventos = () => {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await fetch(`http://127.0.0.1:8000/api/eventos/${eventoId}/inscrever/`, {
+      const response = await fetch(`http://127.0.0.1:8000/eventos/${eventoId}/inscrever/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

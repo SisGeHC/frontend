@@ -89,7 +89,7 @@ const CriarEventoCoord = () => {
         body: JSON.stringify({
           ...eventData,
           creator: userId,
-          dates: [dateId],
+          dates: [dateId], 
         }),
       });
 
@@ -101,7 +101,7 @@ const CriarEventoCoord = () => {
       }
 
       alert("Evento criado com sucesso!");
-      navigate("/dashboard-professor");
+      navigate("/dashboard-coordinator");
     } catch (error) {
       console.error("Erro ao cadastrar evento:", error);
       alert("Erro ao cadastrar evento.");
@@ -180,7 +180,7 @@ const CriarEventoCoord = () => {
             <button onClick={() => navigate("/dashboard-coordinator")} className="bg-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-400">
               Cancelar
             </button>
-            <button type="submit" onClick={() => navigate("/dashboard-coordinator")} className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+            <button type="submit" className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
               Salvar
             </button>
           </div>

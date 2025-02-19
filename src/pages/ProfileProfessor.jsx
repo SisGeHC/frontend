@@ -282,7 +282,7 @@ const ProfileProfessor = () => {
                   className="material-icons text-green-500 cursor-pointer"
                   onClick={() => (field === "password" ? openPasswordModal() : openEditModal(field))}
                 >
-                  edit
+                  ✏️
               </span>
             </div>
           ))}

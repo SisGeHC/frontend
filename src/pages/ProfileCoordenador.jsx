@@ -197,12 +197,12 @@ const ProfileCoordenador = () => {
           <div className="flex items-center space-x-2">
             <label className="w-1/3 text-gray-600 font-medium">E-mail</label>
             <input type="text" value={userData.email} className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readOnly />
-            <span className="material-icons text-green-500 cursor-pointer" onClick={openEditModal}>edit</span>
+            <span className="material-icons text-green-500 cursor-pointer" onClick={openEditModal}>✏️</span>
           </div>
           <div className="flex items-center space-x-2">
             <label className="w-1/3 text-gray-600 font-medium">Senha</label>
             <input type="password" value="********" className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readOnly />
-            <span className="material-icons text-green-500 cursor-pointer" onClick={openPasswordModal}>edit</span>
+            <span className="material-icons text-green-500 cursor-pointer" onClick={openPasswordModal}>✏️</span>
           </div>
         </div>
       </div>

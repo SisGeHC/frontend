@@ -11,7 +11,7 @@ const DashboardProfessor = () => {
       try {
         const token = localStorage.getItem("token");
         const professorId = localStorage.getItem("role_id"); // 🔥 Pegando o ID correto
-  
+
         if (!professorId) {
           console.error("❌ Erro: Professor não identificado.");
           return;
@@ -84,7 +84,7 @@ const DashboardProfessor = () => {
           
           {/* Botão de Criar Evento - Redireciona para página de criação */}
           <div 
-            onClick={() => navigate("/eventos/criar")} 
+            onClick={() => navigate("/eventos/professor")} 
             className="flex flex-col justify-center items-center bg-white shadow-md rounded-lg p-6 border border-gray-300 cursor-pointer hover:bg-gray-50 transition h-[150px]"
           >
             <span className="text-green-500 font-bold leading-none" style={{ fontSize: '5em' }}>+</span> 

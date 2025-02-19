@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import InscricaoEvento from "./InscricaoEvento";
 
 const DashboardAluno = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,6 +12,10 @@ const DashboardAluno = () => {
     const fetchEventos = async () => {
       try {
         const token = localStorage.getItem("token");
+
+        console.log("🔍 Buscando eventos...");
+        console.log("🔑 Token armazenado:", token);
+
         const response = await fetch("http://127.0.0.1:8000/events/list/", {
           method: "GET",
           headers: {
@@ -20,110 +25,27 @@ const DashboardAluno = () => {
         });
 
         if (!response.ok) {
-          throw new Error("Erro ao buscar eventos");
+          throw new Error("❌ Erro ao buscar eventos");
         }
 
         const data = await response.json();
+        console.log("📌 Eventos recebidos do backend:", data);
         setEventos(data);
       } catch (error) {
-        console.error("Erro ao buscar eventos:", error);
+        console.error("🚨 Erro ao buscar eventos:", error);
       }
     };
 
     fetchEventos();
   }, []);
 
-  const handleInscricao = async () => {
-    const studentId = localStorage.getItem("role_id"); // Pegando o ID salvo no login
-    const token = localStorage.getItem("token");
-
-    if (!studentId) {
-        alert("Erro: Aluno não identificado.");
-        return;
-    }
-
-    try {
-        console.log("📡 Buscando dados do estudante...");
-
-        const studentResponse = await fetch(`http://127.0.0.1:8000/students/${studentId}/`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Token ${token}`,
-            },
-        });
-
-        console.log("📩 Resposta do GET /students/{id}/:", studentResponse.status);
-
-        if (!studentResponse.ok) {
-            const errorData = await studentResponse.json();
-            console.error("❌ Erro no GET /students/{id}/:", errorData);
-            throw new Error("Erro ao buscar dados do estudante.");
-        }
-
-        const studentData = await studentResponse.json();
-        const studentIdReal = studentData.id;  // Pegamos o ID correto do estudante
-        console.log("✅ ID do estudante obtido:", studentIdReal);
-
-        // 🔥 Agora verificamos se já está inscrito
-        const checkResponse = await fetch(`http://127.0.0.1:8000/events/student/${studentIdReal}/enrolled/`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Token ${token}`,
-            },
-        });
-
-        if (!checkResponse.ok) {
-            throw new Error("Erro ao verificar inscrições.");
-        }
-
-        const inscritos = await checkResponse.json();
-        const eventosInscritos = inscritos.map(evento => evento.id);
-
-        if (eventosInscritos.includes(selectedEvento.id)) {
-            alert("⚠️ Você já está inscrito neste evento!");
-            return;
-        }
-
-        console.log("✅ Não está inscrito, realizando inscrição...");
-
-        const response = await fetch("http://127.0.0.1:8000/enrollments/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Token ${token}`,
-            },
-            body: JSON.stringify({
-                student: studentIdReal, // Agora está pegando o ID correto
-                event: selectedEvento.id,
-                attended: false,
-            }),
-        });
-
-        console.log("📩 Resposta do POST:", response.status);
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("❌ Erro ao se inscrever:", errorData);
-            alert("❌ Erro ao se inscrever no evento.");
-            return;
-        }
-
-        alert("✅ Inscrição realizada com sucesso!");
-    } catch (error) {
-        console.error("❌ Erro ao se inscrever:", error);
-        alert("❌ Erro ao se inscrever no evento.");
-    }
-};
-
-
-
-
-
   const handleOpenModal = async (eventoId) => {
     try {
       const token = localStorage.getItem("token");
+
+      console.log(`🔍 Buscando detalhes do evento ID: ${eventoId}`);
+      console.log("🔑 Token armazenado:", token);
+
       const response = await fetch(`http://127.0.0.1:8000/events/${eventoId}/`, {
         method: "GET",
         headers: {
@@ -133,17 +55,19 @@ const DashboardAluno = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Erro ao buscar detalhes do evento");
+        throw new Error("❌ Erro ao buscar detalhes do evento");
       }
 
       const data = await response.json();
+      console.log("📌 Detalhes do evento recebido:", data);
       setSelectedEvento(data);
     } catch (error) {
-      console.error("Erro ao buscar detalhes do evento:", error);
+      console.error("🚨 Erro ao buscar detalhes do evento:", error);
     }
   };
 
   const handleCloseModal = () => {
+    console.log("❌ Fechando modal...");
     setSelectedEvento(null);
   };
 
@@ -154,10 +78,9 @@ const DashboardAluno = () => {
   };
 
   const handleMeusEventos = () => {
-    console.log("🚪 Meu Eventos...");
+    console.log("📋 Acessando Meus Eventos...");
     navigate("/meus-eventos");
   };
-
 
   const handleProfile = () => {
     console.log("👤 Acessando perfil...");
@@ -186,7 +109,7 @@ const DashboardAluno = () => {
           {menuOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
               <ul className="py-2">
-              <li onClick={handleProfile} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <li onClick={handleProfile} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                   Minha Conta
                 </li>
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Eventos</li>
@@ -250,28 +173,17 @@ const DashboardAluno = () => {
 
             <div className="flex-grow overflow-auto p-4">
               <p className="text-sm text-gray-500">
-                {selectedEvento.creator?.full_name || "Desconhecido"} - {selectedEvento.course || "Curso não informado"}
+                {selectedEvento.creator?.full_name || "Desconhecido"} - {selectedEvento.creator?.course_name || "Coordenador"}
               </p>
 
               <div className="mt-4">
                 <h4 className="text-lg font-semibold">Descrição</h4>
                 <p className="text-gray-700">{selectedEvento.description}</p>
               </div>
-
-              <div className="mt-4 space-y-2">
-                <p className="text-sm text-gray-600">📅 {selectedEvento.dates?.[0]?.day || "Data não informada"}</p>
-                <p className="text-sm text-gray-600">📍 {selectedEvento.location}</p>
-                <p className="text-sm text-gray-600">
-                  ⏰ {selectedEvento.dates?.[0]?.start_time || "Horário não informado"} - {selectedEvento.dates?.[0]?.end_time || ""}
-                </p>
-                <p className="text-sm text-gray-600">🏷️ {selectedEvento.category}</p>
-              </div>
             </div>
 
             <div className="mt-6 flex justify-center">
-              <button onClick={handleInscricao} className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600">
-                Inscrever-se
-              </button>
+              <InscricaoEvento selectedEvento={selectedEvento} />
             </div>
           </div>
         </div>
@@ -281,8 +193,3 @@ const DashboardAluno = () => {
 };
 
 export default DashboardAluno;
-
-
-
-
-

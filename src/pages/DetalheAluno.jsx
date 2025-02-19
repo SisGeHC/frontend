@@ -8,6 +8,7 @@ const DetalhesAluno = () => {
   const [aluno, setAluno] = useState(null);
   const [eventosAtivos, setEventosAtivos] = useState([]);
   const [eventosEncerrados, setEventosEncerrados] = useState([]);
+  const [certificados, setCertificados] = useState([])
   const [abaAtiva, setAbaAtiva] = useState("ativos");
   const [isLoading, setIsLoading] = useState(true);
   const [selectedEvento, setSelectedEvento] = useState(null);
@@ -61,7 +62,28 @@ const DetalhesAluno = () => {
       }
     };
 
+    const fetchCertificados = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://127.0.0.1:8000/certificates/", {
+          headers: {
+            "Authorization": `Token ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Erro ao buscar certificados.");
+        }
+
+        const data = await response.json();
+        setCertificados(data);
+      } catch (error) {
+        console.error("Erro ao buscar certificados:", error);
+      }
+    };
+
     fetchAluno();
+    fetchCertificados();
     fetchEventosAluno();
   }, [id]);
 
@@ -109,10 +131,10 @@ const DetalhesAluno = () => {
                 <li onClick={() => navigate("/dashboard-coordinator")} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                   Dashboard
                 </li>
-                <li onClick={() => navigate("/alunos")} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <li onClick={() => navigate("/lista-alunos")} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                   Alunos
                 </li>
-                <li onClick={() => navigate("/professores")} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <li onClick={() => navigate("/lista-professores")} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                   Professores
                 </li>
                 <li onClick={() => navigate("/certificados")} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
@@ -159,9 +181,29 @@ const DetalhesAluno = () => {
         </div>
       </div>
 
-      {/* Lista de eventos ativos ou encerrados */}
+      {/* 🔥 Lista de eventos ativos, encerrados ou certificados */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-3/5 mt-6">
-        {(abaAtiva === "ativos" ? eventosAtivos : eventosEncerrados).length > 0 ? (
+        {abaAtiva === "certificados" ? (
+          certificados.length > 0 ? (
+            certificados.map((certificado) => (
+              <div key={certificado.id} className="bg-white shadow-md rounded-lg p-4">
+                <h3 className="text-lg font-bold">Certificado #{certificado.id}</h3>
+                <p className="text-sm text-gray-600">📅 Data: {new Date(certificado.created_at).toLocaleDateString()}</p>
+                <p className="text-sm text-gray-600">⏳ Carga horária: {certificado.hours_taken}h</p>
+                <a
+                  href={certificado.file}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 bg-blue-500 text-white w-full py-2 rounded-lg hover:bg-blue-600 text-center block"
+                >
+                  Ver Certificado 📜
+                </a>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-center w-full">Nenhum certificado encontrado.</p>
+          )
+        ) : (abaAtiva === "ativos" ? eventosAtivos : eventosEncerrados).length > 0 ? (
           (abaAtiva === "ativos" ? eventosAtivos : eventosEncerrados).map((evento) => (
             <div key={evento.id} className="bg-white shadow-md rounded-lg p-4">
               <h3 className="text-lg font-bold">{evento.event.title}</h3>
