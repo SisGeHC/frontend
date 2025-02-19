@@ -60,6 +60,7 @@ const Login = () => {
   
     } catch (error) {
       console.error("❌ Erro ao fazer login:", error);
+      alert("❌ Login inválido, tente novamente.")
     }
   };
   

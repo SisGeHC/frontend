@@ -21,11 +21,12 @@ import ListaAlunos from "./pages/ListaAlunos";
 import ListaProfessores from "./pages/ListaProfessores";
 import DetalhesAluno from "./pages/DetalheAluno";
 import DetalhesProfessor from "./pages/DetalheProfessor";
-import CertificadosPendentes from "./pages/CertificadosPendentes.jsx";
-import EventoDetalhes from "./pages/Presenca.jsx";
-import EditarEventoCoord from "./pages/EditarEventoCoordenador.jsx";
-import CriarEventoCoord from "./pages/CriarEventoCoordenador.jsx";
-
+import CertificadosPendentes from "./pages/CertificadosPendentes";
+import EventoDetalhes from "./pages/Presenca";
+import EditarEventoCoord from "./pages/EditarEventoCoordenador";
+import CriarEventoCoord from "./pages/CriarEventoCoordenador";
+import ValidateQRCode from "./pages/ValidateQRCode";
+import ValidateQRCodeCoord from "./pages/ValidadeQRCodeCoord";
 
 function App() {
   return (
@@ -56,6 +57,8 @@ function App() {
         <Route path="/meus-eventos" element={<MeusEventosAluno />} /> {/* Rota de eventosinscritos */}
         <Route path="/certificados" element={<Certificados />} />
         <Route path="*" element={<h2>Página não encontrada</h2>} />
+        <Route path="/validar-presenca" element={<ValidateQRCode />} /> {/* Validar Presenças */}
+        <Route path="/validar-presenca/coordenador" element={<ValidateQRCodeCoord />} /> {/* Validar Presenças */}
       </Routes>
     </BrowserRouter>
   );

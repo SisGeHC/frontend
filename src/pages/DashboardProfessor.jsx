@@ -5,6 +5,10 @@ const DashboardProfessor = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [eventos, setEventos] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
     const fetchEventos = async () => {
@@ -40,13 +44,39 @@ const DashboardProfessor = () => {
     fetchEventos();
   }, []);
   
-  
-  
-  
+  const handleSendEmail = async () => {
+    const token = localStorage.getItem("token");
+    setIsSending(true);
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/enrollments/send-event-notification/${selectedEvent.id}/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${token}`,
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      if (response.ok) {
+        alert("E-mail enviado com sucesso!");
+      } else {
+        alert("Erro ao enviar o e-mail.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao enviar o e-mail.");
+    }
+    setIsSending(false);
+  };
 
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
+  };
+
+  const openModal = (evento) => {
+    setSelectedEvent(evento);
+    setIsModalOpen(true);
   };
 
   return (
@@ -108,7 +138,7 @@ const DashboardProfessor = () => {
                 )}
 
                 <p className="text-sm text-gray-600">📍 {evento.location}</p>
-
+                <button onClick={() => openModal(evento)} className="mt-4 bg-green-500 text-white w-full py-2 rounded-lg hover:bg-green-600 flex justify-center items-center">Ações</button>
                 <button 
                   onClick={() => navigate(`/eventos/editar/${evento.id}`)}
                   className="mt-4 bg-green-500 text-white w-full py-2 rounded-lg hover:bg-green-600 flex justify-center items-center"
@@ -124,6 +154,32 @@ const DashboardProfessor = () => {
           )}
         </div>
       </div>
+      
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[70%] max-w-lg">
+            <h3 className="text-lg font-bold">Enviar E-mail para os Alunos</h3>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Digite a mensagem..."
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+            />
+            <div className="flex justify-between">
+              <button onClick={handleSendEmail} disabled={isSending} className="bg-green-500 text-white p-2 rounded disabled:opacity-50">
+                {isSending ? "Enviando..." : "Enviar E-mail"}
+              </button>
+              <button onClick={() => setIsModalOpen(false)} className="bg-red-500 text-white p-2 rounded">
+                Cancelar
+              </button>
+            </div>
+            <a href="http://127.0.0.1:3000/validar-presenca" className="mt-4 block bg-blue-500 text-lg font-bold text-center p-2 rounded">
+              Validar Presença
+            </a>
+          </div>
+        </div>
+      )}
 
       {/* Rodapé */}
       <footer className="bg-green-700 text-white text-center p-4 mt-6">
